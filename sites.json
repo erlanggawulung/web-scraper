@@ -1,0 +1,37 @@
+[
+ {
+  "title": "E-commerce site",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tAll items are loaded in one page.",
+  "link": "/test-sites/e-commerce/allinone"
+ },
+ {
+  "title": "E-commerce site with pagination links",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tStandard links are used for pagination.",
+  "link": "/test-sites/e-commerce/static"
+ },
+ {
+  "title": "E-commerce site with popup links",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tLinks to product pages are made with popup links.",
+  "link": "/test-sites/e-commerce/allinone-popup-links"
+ },
+ {
+  "title": "E-commerce site with AJAX pagination links",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tDynamic links that use data without reloading the page for\n\t\t\t\t\tpagination.",
+  "link": "/test-sites/e-commerce/ajax"
+ },
+ {
+  "title": "E-commerce site with \"Load more\" buttons",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tInstead of using pagination this site uses a \"Load more\"\n\t\t\t\t\tbutton to load more items.",
+  "link": "/test-sites/e-commerce/more"
+ },
+ {
+  "title": "E-commerce site that loads items while scrolling",
+  "description": "E-commerce site with multiple categories, subcategories.\n\t\t\t\t\tInstead of using pagination this site loads items when user\n\t\t\t\t\tscrolls the page down.",
+  "link": "/test-sites/e-commerce/scroll"
+ },
+ {
+  "title": "Table playground",
+  "description": "This page contains multiple tables. You can train using Table\n\t\t\t\t\tselector here.",
+  "link": "/test-sites/tables"
+ }
+]
