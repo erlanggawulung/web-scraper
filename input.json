@@ -4,21 +4,21 @@
   "parentClass": ".row",
   "jsonFileName": "sites.json",
   "csvFileName": "sites.csv",
-  "results": [
+  "maps": [
     {
-      "keyName": "title",
+      "key": "title",
       "childText": "h2"
     },
     {
-      "keyName": "description",
+      "key": "description",
       "childText": "p"
     },
     {
-      "keyName": "websiteURL",
+      "key": "websiteURL",
       "childAttrs":["a", "href"]
     },
     {
-      "keyName": "imageURL",
+      "key": "imageURL",
       "childAttrs":["img", "src"]
     }
   ]

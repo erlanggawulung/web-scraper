@@ -11,22 +11,30 @@ import (
 	"github.com/gocolly/colly"
 )
 
-type Site struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Link        string `json:"link"`
-	ImageLink   string `json:"imageLink"`
+type Input struct {
+	AllowedDomains []string   `json:"allowedDomains"`
+	SiteURL        string     `json:"siteURL"`
+	ParentClass    string     `json:"parentClass"`
+	InputMaps      []InputMap `json:"maps"`
+	JSONFileName   string     `json:"jsonFileName"`
+	CSVFileName    string     `json:"csvFileName"`
 }
 
-type Input struct {
-	AllowedDomains []string `json:"allowedDomains"`
-	SiteURL        string   `json:"siteURL"`
-	ParentClass    string   `json:"parentClass"`
+type InputMap struct {
+	Key        string   `json:"key"`
+	ChildText  string   `json:"childText"`
+	ChildAttrs []string `json:"childAttrs"`
+}
+
+type OutputMap struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 func main() {
 	input := readInput()
-	allSites := make([]Site, 0)
+	//allSites := make([]Site, 0)
+	results := make([][]OutputMap, 0)
 
 	collector := colly.NewCollector(
 		colly.AllowedDomains(input.AllowedDomains...),
@@ -34,32 +42,26 @@ func main() {
 
 	collector.OnHTML(input.ParentClass, func(element *colly.HTMLElement) {
 		log.Println("Element: ", element)
-		siteTitle := element.ChildText("h2")
-
-		var siteLink string
-		siteLinks := element.ChildAttrs("a", "href")
-		if len(siteLinks) > 0 {
-			siteLink = siteLinks[0]
-		}
-
-		var imageLink string
-		imageLinks := element.ChildAttrs("img", "src")
-		if len(imageLinks) > 0 {
-			imageLink = imageLinks[0]
-		}
-
-		siteDescription := element.ChildText("p")
-
-		if len(siteTitle) > 0 {
-			site := Site{
-				Title:       siteTitle,
-				Description: siteDescription,
-				Link:        siteLink,
-				ImageLink:   imageLink,
+		outputRow := make([]OutputMap, 0)
+		for _, item := range input.InputMaps {
+			if len(item.ChildText) > 0 {
+				outputItem := OutputMap{
+					Key:   item.Key,
+					Value: element.ChildText(item.ChildText),
+				}
+				outputRow = append(outputRow, outputItem)
+			} else if len(item.ChildAttrs) > 0 {
+				values := element.ChildAttrs(item.ChildAttrs[0], item.ChildAttrs[1])
+				if len(values) > 0 {
+					outputItem := OutputMap{
+						Key:   item.Key,
+						Value: values[0],
+					}
+					outputRow = append(outputRow, outputItem)
+				}
 			}
-
-			allSites = append(allSites, site)
 		}
+		results = append(results, outputRow)
 	})
 
 	collector.OnRequest(func(request *colly.Request) {
@@ -68,30 +70,42 @@ func main() {
 
 	collector.Visit(input.SiteURL)
 
-	writeJSON(allSites)
-	writeCSV(allSites)
+	if len(input.JSONFileName) > 0 {
+		writeJSON(input, results)
+	}
+	if len(input.CSVFileName) > 0 {
+		writeCSV(input, results)
+	}
 }
 
-func writeJSON(data []Site) {
+func writeJSON(input Input, data [][]OutputMap) {
 	file, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		log.Println("Unable to create json file")
 		return
 	}
-	_ = ioutil.WriteFile("output/sites.json", file, 0644)
+	_ = ioutil.WriteFile("output/"+input.JSONFileName, file, 0644)
 }
 
-func writeCSV(data []Site) {
-	rows := [][]string{
-		{"Title", "Description", "Link", "ImageLink"},
+func writeCSV(input Input, data [][]OutputMap) {
+	rows := [][]string{}
+
+	// Generate header, rows[0]
+	rowZero := []string{}
+	for _, item := range input.InputMaps {
+		rowZero = append(rowZero, item.Key)
+	}
+	rows = append(rows, rowZero)
+
+	for _, row := range data {
+		rowN := []string{}
+		for _, column := range row {
+			rowN = append(rowN, column.Value)
+		}
+		rows = append(rows, rowN)
 	}
 
-	for _, site := range data {
-		row := []string{site.Title, site.Description, site.Link, site.ImageLink}
-		rows = append(rows, row)
-	}
-
-	csvfile, err := os.Create("output/sites.csv")
+	csvfile, err := os.Create("output/" + input.CSVFileName)
 
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)
