@@ -1,0 +1,5 @@
+{
+  "allowedDomains": ["webscraper.io"],
+  "siteURL": "https://webscraper.io/test-sites",
+  "parentClass": ".row"
+}

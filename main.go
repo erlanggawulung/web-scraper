@@ -18,14 +18,21 @@ type Site struct {
 	ImageLink   string `json:"imageLink"`
 }
 
+type Input struct {
+	AllowedDomains []string `json:"allowedDomains"`
+	SiteURL        string   `json:"siteURL"`
+	ParentClass    string   `json:"parentClass"`
+}
+
 func main() {
+	input := readInput()
 	allSites := make([]Site, 0)
 
 	collector := colly.NewCollector(
-		colly.AllowedDomains("webscraper.io"),
+		colly.AllowedDomains(input.AllowedDomains...),
 	)
 
-	collector.OnHTML(".row", func(element *colly.HTMLElement) {
+	collector.OnHTML(input.ParentClass, func(element *colly.HTMLElement) {
 		log.Println("Element: ", element)
 		siteTitle := element.ChildText("h2")
 
@@ -59,7 +66,7 @@ func main() {
 		fmt.Println("Visiting", request.URL.String())
 	})
 
-	collector.Visit("https://webscraper.io/test-sites")
+	collector.Visit(input.SiteURL)
 
 	writeJSON(allSites)
 	writeCSV(allSites)
@@ -99,4 +106,31 @@ func writeCSV(data []Site) {
 	csvwriter.Flush()
 
 	csvfile.Close()
+}
+
+func readInput() Input {
+	// Open our jsonFile
+	jsonFile, err := os.Open("input.json")
+
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Successfully Opened input.json")
+
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	// read our opened jsonFile as a byte array.
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	// we initialize our Users array
+	var input Input
+
+	// we unmarshal our byteArray which contains our
+	// jsonFile's content into 'users' which we defined above
+	json.Unmarshal(byteValue, &input)
+
+	return input
 }
