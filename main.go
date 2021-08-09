@@ -33,7 +33,6 @@ type OutputMap struct {
 
 func main() {
 	input := readInput()
-	//allSites := make([]Site, 0)
 	results := make([][]OutputMap, 0)
 
 	collector := colly.NewCollector(
