@@ -98,10 +98,12 @@ func writeCSV(input Input, data [][]OutputMap) {
 
 	for _, row := range data {
 		rowN := []string{}
-		for _, column := range row {
-			rowN = append(rowN, column.Value)
+		if len(row) == len(rowZero) {
+			for _, column := range row {
+				rowN = append(rowN, column.Value)
+			}
+			rows = append(rows, rowN)
 		}
-		rows = append(rows, rowN)
 	}
 
 	csvfile, err := os.Create("output/" + input.CSVFileName)
