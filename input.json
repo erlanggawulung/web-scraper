@@ -1,5 +1,25 @@
 {
   "allowedDomains": ["webscraper.io"],
   "siteURL": "https://webscraper.io/test-sites",
-  "parentClass": ".row"
+  "parentClass": ".row",
+  "jsonFileName": "sites.json",
+  "csvFileName": "sites.csv",
+  "results": [
+    {
+      "keyName": "title",
+      "childText": "h2"
+    },
+    {
+      "keyName": "description",
+      "childText": "p"
+    },
+    {
+      "keyName": "websiteURL",
+      "childAttrs":["a", "href"]
+    },
+    {
+      "keyName": "imageURL",
+      "childAttrs":["img", "src"]
+    }
+  ]
 }

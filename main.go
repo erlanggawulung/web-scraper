@@ -78,7 +78,7 @@ func writeJSON(data []Site) {
 		log.Println("Unable to create json file")
 		return
 	}
-	_ = ioutil.WriteFile("sites.json", file, 0644)
+	_ = ioutil.WriteFile("output/sites.json", file, 0644)
 }
 
 func writeCSV(data []Site) {
@@ -91,7 +91,7 @@ func writeCSV(data []Site) {
 		rows = append(rows, row)
 	}
 
-	csvfile, err := os.Create("sites.csv")
+	csvfile, err := os.Create("output/sites.csv")
 
 	if err != nil {
 		log.Fatalf("failed creating file: %s", err)
